@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <context:component-scan base-package="service"/>
+    <context:property-placeholder location="classpath*:jdbc.properties"/>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close"
+          p:driverClassName="${jdbc.driver}"
+          p:url="${jdbc.url}"
+          p:username="${jdbc.userName}"
+          p:password="${jdbc.password}"/>
+
+
+    <!--&lt;!&ndash;配置DBCP（DataBase connection pool，数据库连接池）&ndash;&gt;-->
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">-->
+    <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+    <!--<property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis?characterEncoding=utf8"/>-->
+    <!--<property name="username" value="root"/>-->
+    <!--<property name="password" value="1234"/>-->
+    <!--</bean>-->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--dataSource属性，用来指定要用到的连接池-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--用来指定mapper.xml文件的路径-->
+        <property name="mapperLocations" value="classpath*:mapper/*.xml"/>
+        <!--configLocation属性指定mybatis的核心配置文件-->
+        <!--<property name="configLocation" value="mybatis-config.xml"/>-->
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--sqlSessionFactory属性指定要用到的SqlSessionFactory实例-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!--mapperInterface属性指定映射器接口，用于实现此接口并生成映射器对象-->
+        <property name="basePackage" value="mapper"/>
+    </bean>
+
+</beans>

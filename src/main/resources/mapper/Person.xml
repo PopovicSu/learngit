@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.IPersonOperation">
+    <!--为了返回list类型而定义的resultMap-->
+    <resultMap id="resultListPerson" type="entity.Person">
+
+        <id column="id" property="id"/>
+
+        <result column="userName" property="userName"/>
+        <result column="age" property="age"/>
+        <result column="mobilePhone" property="mobilePhone"/>
+    </resultMap>
+
+    <resultMap id="resultListPersonArticle" type="entity.Article">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <association property="person" javaType="entity.Person">
+            <id column="id" property="id"/>
+            <result column="userName" property="userName"/>
+            <result column="age" property="age"/>
+            <result column="mobilePhone" property="mobilePhone"/>
+        </association>
+    </resultMap>
+
+    <select id="getPersonArticles" parameterType="int" resultMap="resultListPersonArticle">
+        select person.id,person.userName,person.age,person.mobilePhone,
+            article.id,article.title,article.content from person,article
+            where person.id=article.userid and person.id=#{id}
+    </select>
+
+
+    <insert id="insertPerson" parameterType="entity.Person">
+        INSERT INTO PERSON(ID,USERNAME,AGE,MOBILEPHONE)
+        VALUES (#{id},#{userName},#{age},#{mobilePhone})
+    </insert>
+
+    <select id="queryById" parameterType="int" resultType="entity.Person">
+        SELECT * FROM PERSON WHERE ID=#{id}
+    </select>
+
+    <select id="selectAllPersons" parameterType="String" resultMap="resultListPerson">
+        select * from PERSON
+        where userName=#{userName}
+    </select>
+
+    <update id="updatePerson" parameterType="entity.Person">
+        UPDATE PERSON SET USERNAME=#{userName},AGE=#{age},MOBILEPHONE=#{mobilePhone} WHERE ID=#{id}
+    </update>
+
+    <delete id="deletePersonById" parameterType="Integer">
+        delete from PERSON
+        where id = #{id}
+    </delete>
+
+</mapper>
