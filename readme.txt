@@ -8,3 +8,4 @@ Creating a new branch is quick also ,also simple.
 modify a line on branch dev.
 modify a line on branch origin/master.
 2017/7/25
+add a line on dev.
