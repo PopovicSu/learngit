@@ -1,6 +1,6 @@
-import entity.Article;
-import entity.Person;
-import mapper.IPersonOperation;
+import entity.person.Article;
+import entity.person.Person;
+import mapper.IPersonOperationMapper;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,13 +16,13 @@ import java.util.List;
 public class UserTest {
 
     private SqlSession sqlSession;
-    private IPersonOperation personOperation;
+    private IPersonOperationMapper personOperation;
     private Logger logger;
 
     @Before
     public void init() {
         sqlSession = MybatisUtil.getSqlSession();
-        personOperation = sqlSession.getMapper(IPersonOperation.class);
+        personOperation = sqlSession.getMapper(IPersonOperationMapper.class);
         logger = LoggerFactory.getLogger(UserTest.class);
     }
 
@@ -74,7 +74,7 @@ public class UserTest {
     public void selectAllPersons() {
         //得到sqlSession
         //用sqlSession得到这个接口对象
-        IPersonOperation personOperation = sqlSession.getMapper(IPersonOperation.class);
+        IPersonOperationMapper personOperation = sqlSession.getMapper(IPersonOperationMapper.class);
         //用这个接口对象调用方法进行查询
         List<Person> personList = personOperation.selectAllPersons("test");
         System.out.println("输出结果:");
@@ -85,7 +85,7 @@ public class UserTest {
 
     @Test
     public void updatePerson() {
-        IPersonOperation personOperation = sqlSession.getMapper(IPersonOperation.class);
+        IPersonOperationMapper personOperation = sqlSession.getMapper(IPersonOperationMapper.class);
         Person person = new Person();
         int result = personOperation.updatePerson(person);
         sqlSession.commit();

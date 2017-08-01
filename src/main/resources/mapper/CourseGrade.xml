@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.ICourseGradeOperationMapper">
+
+    <resultMap id="courseGradeResultMap" type="entity.studentInfo.CourseGrade">
+        <id column="id" property="id"/>
+        <result column="student_no" property="studentNo"/>
+        <result column="course_no" property="courseNo"/>
+        <result column="grade" property="grade"/>
+        <result column="message" property="message"/>
+    </resultMap>
+
+    <select id="findCourseGradeListByStudentId" parameterType="java.lang.String" resultMap="courseGradeResultMap">
+        select * from courseGrade
+        <where>
+            <if test="sId !=null and sId !=''">
+                and student_no=#{sId}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

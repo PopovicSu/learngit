@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="mapper.IPersonOperation">
+<!--命名空间表示每个操作在哪个JAVA文件中定义-->
+<mapper namespace="mapper.IPersonOperationMapper">
     <!--为了返回list类型而定义的resultMap-->
-    <resultMap id="resultListPerson" type="entity.Person">
-
+    <resultMap id="resultListPerson" type="entity.person.Person">
         <id column="id" property="id"/>
 
         <result column="userName" property="userName"/>
@@ -12,11 +12,18 @@
         <result column="mobilePhone" property="mobilePhone"/>
     </resultMap>
 
-    <resultMap id="resultListPersonArticle" type="entity.Article">
+    <resultMap id="newPersonResultMap" type="entity.person.NewPerson">
+        <id column="id" property="newId"/>
+        <result column="userName" property="newUserName"/>
+        <result column="age" property="newAge"/>
+        <result column="mobilePhone" property="newMobilePhone"/>
+    </resultMap>
+
+    <resultMap id="resultListPersonArticle" type="entity.person.Article">
         <id column="id" property="id"/>
         <result column="title" property="title"/>
         <result column="content" property="content"/>
-        <association property="person" javaType="entity.Person">
+        <association property="person" javaType="entity.person.Person">
             <id column="id" property="id"/>
             <result column="userName" property="userName"/>
             <result column="age" property="age"/>
@@ -31,12 +38,12 @@
     </select>
 
 
-    <insert id="insertPerson" parameterType="entity.Person">
+    <insert id="insertPerson" parameterType="entity.person.Person">
         INSERT INTO PERSON(ID,USERNAME,AGE,MOBILEPHONE)
         VALUES (#{id},#{userName},#{age},#{mobilePhone})
     </insert>
 
-    <select id="queryById" parameterType="int" resultType="entity.Person">
+    <select id="queryById" parameterType="int" resultType="entity.person.Person">
         SELECT * FROM PERSON WHERE ID=#{id}
     </select>
 
@@ -45,7 +52,7 @@
         where userName=#{userName}
     </select>
 
-    <update id="updatePerson" parameterType="entity.Person">
+    <update id="updatePerson" parameterType="entity.person.Person">
         UPDATE PERSON SET USERNAME=#{userName},AGE=#{age},MOBILEPHONE=#{mobilePhone} WHERE ID=#{id}
     </update>
 
@@ -53,5 +60,79 @@
         delete from PERSON
         where id = #{id}
     </delete>
+
+    <select id="queryByIdOrNull" parameterType="Integer" resultMap="resultListPerson">
+        SELECT * from person
+        <where>
+            <if test="id != null and id >= 0">
+                and id= #{id}
+            </if>
+        </where>
+    </select>
+
+    <!--按照person的userName，age，mobilePhone进行查-->
+    <select id="queryByAnotherOccasion" parameterType="entity.person.Person" resultMap="resultListPerson">
+        select * from person
+        <where>
+            <choose>
+                <when test="userName!=null and userName != '' ">
+                    and person.userName= #{userName}
+                </when>
+                <when test="age!= null and age>0">
+                    and person.age= #{age}
+                </when>
+                <otherwise>
+                    and mobilePhone is not null
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <update id="updateNewPerson">
+        update person
+        <set>
+            <if test="age!= null and age >0">
+                age=#{age},
+            </if>
+            <if test="userName!=null and userName!=''">
+                userName=#{userName}
+            </if>
+            where id=10000
+        </set>
+    </update>
+
+    <select id="selectPersonInMobilePhoneList" parameterType="java.util.List" resultMap="resultListPerson">
+        select * from person
+        where mobilePhone in
+        <foreach collection="mobilePhoneList" item="mobilePhone" separator="," open="(" close=")">
+            #{mobilePhone}
+        </foreach>
+    </select>
+
+    <select id="selectMobilePhoneListFromPhoneFragment" parameterType="java.lang.String" resultMap="resultListPerson">
+        SELECT * from person
+        <where>
+            <if test="phoneFragment!=null and phoneFragment!=''">
+                and person.mobilePhone LIKE #{phoneFragment}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectNewPerson" resultType="entity.person.NewPerson" parameterType="entity.person.Person">
+        select id as newId, age as newAge,userName as newUserName,mobilePhone as newMobilePhone
+        from person
+        where person.age=#{age}
+    </select>
+
+    <select id="selectNewPersonByMap" resultMap="newPersonResultMap" parameterType="java.util.Map">
+        select *
+        from person
+        <where>
+            <if test="myAge!=null and myAge>0">
+                and age=#{myAge}
+            </if>
+        </where>
+    </select>
 
 </mapper>

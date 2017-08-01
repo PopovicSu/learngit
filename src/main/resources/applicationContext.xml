@@ -10,6 +10,7 @@
             http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
     <context:component-scan base-package="service"/>
+
     <context:property-placeholder location="classpath*:jdbc.properties"/>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -31,12 +32,14 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!--dataSource属性，用来指定要用到的连接池-->
         <property name="dataSource" ref="dataSource"/>
+
         <!--用来指定mapper.xml文件的路径-->
         <property name="mapperLocations" value="classpath*:mapper/*.xml"/>
-        <!--configLocation属性指定mybatis的核心配置文件-->
-        <!--<property name="configLocation" value="mybatis-config.xml"/>-->
+
     </bean>
 
+
+    <!--采用自动扫描的方式创建mapper bean(动态代理）-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <!--sqlSessionFactory属性指定要用到的SqlSessionFactory实例-->
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>

@@ -1,4 +1,4 @@
-package entity;
+package entity.person;
 
 /**
  * Created by shaobo.su on 2017/7/17.

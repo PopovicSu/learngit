@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.IStudentOperationMapper">
+
+    <resultMap id="identityCardResultMap" type="entity.studentInfo.IdentityCard">
+        <id column="id" property="id"/>
+        <result column="student_id" property="studentId"/>
+        <result column="area" property="area"/>
+        <result column="validDate" property="validDate"/>
+        <result column="invalidDate" property="invalidDate"/>
+    </resultMap>
+
+    <resultMap id="courseGradeResultMap" type="entity.studentInfo.CourseGrade">
+        <id column="id" property="id"/>
+        <result column="student_no" property="studentNo"/>
+        <result column="course_no" property="courseNo"/>
+        <result column="grade" property="grade"/>
+        <result column="message" property="message"/>
+    </resultMap>
+
+    <resultMap id="studentResultMap" type="entity.studentInfo.Student">
+        <id column="student_id" property="studentId" jdbcType="VARCHAR"/>
+        <result column="student_name" property="studentName"/>
+        <result column="sex" property="sex"/>
+        <result column="message" property="message"/>
+        <association property="identityCard"
+                     resultMap="identityCardResultMap"
+                     javaType="entity.studentInfo.IdentityCard"/>
+
+        <!--<collection property="courseGradeList"-->
+                    <!--resultMap="courseGradeResultMap"-->
+                    <!--ofType="entity.studentInfo.CourseGrade"/>-->
+
+    </resultMap>
+
+    <select id="findStudentByStudentId" resultMap="studentResultMap">
+        select
+        st.student_id,
+        st.student_name,
+        st.sex,
+        st.message,
+        id.id,
+        id.student_id,
+        id.area,
+        id.validDate,
+        id.invalidDate
+
+        from student st, identityCard id
+        <where>
+            <if test="sId != null and sId != ''">
+                and st.student_id = #{sId}
+            </if>
+            and id.student_id = st.student_id
+
+        </where>
+    </select>
+
+</mapper>
